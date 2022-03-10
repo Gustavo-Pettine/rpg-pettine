@@ -1,0 +1,3 @@
+player_1 = LOAD
+player_2 = LOAD
+BATTLE player_1 player_2
