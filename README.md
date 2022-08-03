@@ -66,12 +66,17 @@ py main.py .\example\battle.rpg
 ```txt
 Grammar                                         Action
 ------------------------                        ---------------------------------
+statement : PRINT expr                          lf.print(expr.val)
+          | ID = expr                           ID.val = expr.val
+          | expr
+
 expr0     : ID                                  expr0.val = self.ids[ID.val]
           | ID = expr1                          ID.val = expr1.val
-          | PRINT expr1                         lf.print(expr0), expr0.val = expr1.val
           | LOAD                                expr0.val = lf.load()
           | LOAD STRING                         expr0.val = lf.load(STRING.val)
           | BATTLE expr1 expr2                  lf.battle(expr1.val, expr2.val)
+
+select    : SELECT STRING FROM expr             lf.select_from(STRING.val, expr.val)
 ```
 
 ## Apresentação
@@ -91,16 +96,19 @@ Fora isso, o template do código foi retirado de [um repositório aberto](https:
 As definições léxicas e gramaticais podem ser conferidas na Seção <a href="#produções-e-ações-semânticas">Produções e Ações Semânticas</a>. As definições de expressões regulares utilizadas para gerar os tokens podem ser encontradas no trecho de código abaixo:
 
 ```py
-tokens = { ID, ASSIGN, STRING, PRINT, LOAD, BATTLE }
+tokens = { ID, ASSIGN, STRING, PRINT, LOAD, BATTLE, SELECT, FROM }
 
-PRINT   = r"PRINT"
-LOAD    = r"LOAD"
-BATTLE  = r"BATTLE"
-ASSIGN  = r'='
-ID      = r"[a-zA-Z_]\w*"
+  PRINT   = r"PRINT"
+  LOAD    = r"LOAD"
+  BATTLE  = r"BATTLE"
+  SELECT  = r"SELECT"
+  FROM    = r"FROM"
+  ASSIGN  = r'='
+  ID      = r"[a-zA-Z_]\w*"
 
 @_(r'".*"')
 def STRING(self, t):
+  t.value = t.value.strip('\"')
   return t
 ```
 
