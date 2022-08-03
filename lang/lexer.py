@@ -1,3 +1,4 @@
+from lzma import FORMAT_ALONE
 from sly import Lexer
 
 class RPGLexer(Lexer):
@@ -5,16 +6,19 @@ class RPGLexer(Lexer):
   ignore_comment = r"//.*\n"
   ignore_newline = r"\n+"
 
-  tokens = { ID, ASSIGN, STRING, PRINT, LOAD, BATTLE }
+  tokens = { ID, ASSIGN, STRING, PRINT, LOAD, BATTLE, SELECT, FROM }
 
   PRINT   = r"PRINT"
   LOAD    = r"LOAD"
   BATTLE  = r"BATTLE"
+  SELECT  = r"SELECT"
+  FROM    = r"FROM"
   ASSIGN  = r'='
   ID      = r"[a-zA-Z_]\w*"
 
   @_(r'".*"')
   def STRING(self, t):
+    t.value = t.value.strip('\"')
     return t
 
   def ignore_newline(self, t):
